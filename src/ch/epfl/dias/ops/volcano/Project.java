@@ -7,25 +7,37 @@ import ch.epfl.dias.store.row.DBTuple;
 
 public class Project implements VolcanoOperator {
 
-	// TODO: Add required structures
+	private final VolcanoOperator mChild;
+	private final int[] mFieldNo;
 
 	public Project(VolcanoOperator child, int[] fieldNo) {
-		// TODO: Implement
+		if (fieldNo == null)
+			throw new NullPointerException();
+
+		if (fieldNo.length == 0)
+			throw new IllegalArgumentException();
+	
+		mChild = child;
+		mFieldNo = fieldNo;
 	}
 
 	@Override
 	public void open() {
-		// TODO: Implement
+		mChild.open();
 	}
 
 	@Override
 	public DBTuple next() {
-		// TODO: Implement
-		return null;
+		DBTuple tuple = mChild.next();
+		Object[] fields = new Object[mFieldNo.length];
+		for (int i = 0; i < mFieldNo.length; ++i)
+			fields[i] = tuple.fields[i];
+		
+		return new DBTuple(fields, tuple.types);	
 	}
 
 	@Override
 	public void close() {
-		// TODO: Implement
+		mChild.close();
 	}
 }
