@@ -30,7 +30,7 @@ public class Select implements VolcanoOperator {
 	public DBTuple next() {
 		DBTuple tuple = mChild.next();
 		while (!tuple.eof) {
-			if (tuple.fields.length >= mFieldNo)
+			if (mFieldNo >= tuple.fields.length)
 				throw new RuntimeException("SELECT: Invalid field index. Expected < " + tuple.fields.length + ", received " + mFieldNo);
 				
 			if (tuple.types[mFieldNo] != DataType.INT)

@@ -45,6 +45,7 @@ public class ProjectAggregate implements VolcanoOperator {
 					break;
 				case COUNT:
 					value = ++counter;
+					tuple = mChild.next();
 					break;
 				case MIN:
 					final double minValue = getFieldValue(tuple);
