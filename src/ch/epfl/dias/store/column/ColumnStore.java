@@ -61,7 +61,7 @@ public class ColumnStore extends Store {
 			}
 			reader.close();
 			for (int i = 0; i < columns.size(); ++i)
-				mData[i] = new DBColumn(columns.get(i).toArray());
+				mData[i] = new DBColumn(columns.get(i).toArray(), mSchema[i]);
 		}
 		catch(Exception e) {
 			System.err.println("Error occured when loading file '" + mFilePath + "'.");

@@ -20,6 +20,9 @@ public class PAXStore extends Store {
 	private DBPAXpage[] mPages;
 
 	public PAXStore(DataType[] schema, String fileName, String delimiter, int tuplesPerPage) {
+		if (tuplesPerPage < 1)
+			throw new IllegalArgumentException("PAXStore: Must have at least one tuple per page");
+
 		mFilePath = Paths.get(fileName);
 		mDelimiter = delimiter;
 		mPages = null;
@@ -63,17 +66,17 @@ public class PAXStore extends Store {
 								throw new RuntimeException("Unrecognized type.");
 						}
 					}
-					// Reached tuples limit => create new PAXPage
-					if (++counter == mTuplesPerPage) {
-						DBColumn[] fields = new DBColumn[mSchema.length];
-						for (int j = 0; j < fields.length; ++j) {
-							fields[j] = new DBColumn(columns.get(j).toArray());
-							columns.get(j).clear();
-						}
-
-						pages.add(new DBPAXpage(fields, mSchema));
-						counter = 0;
+				}
+				// Reached tuples limit => create new PAXPage
+				if (++counter == mTuplesPerPage) {
+					DBColumn[] fields = new DBColumn[mSchema.length];
+					for (int j = 0; j < fields.length; ++j) {
+						fields[j] = new DBColumn(columns.get(j).toArray(), mSchema[j]);
+						columns.get(j).clear();
 					}
+
+					pages.add(new DBPAXpage(fields, mSchema));
+					counter = 0;
 				}
 			}
 			reader.close();
@@ -89,11 +92,11 @@ public class PAXStore extends Store {
 
 	@Override
 	public DBTuple getRow(int rowNumber) {
-		final int pageIndex = rowNumber % mTuplesPerPage;
+		final int pageIndex = rowNumber / mTuplesPerPage;
 		if (pageIndex >= mPages.length)
 			return new DBTuple();
 
-		final int pageRowIndex = rowNumber - (pageIndex * mTuplesPerPage);
+		final int pageRowIndex = rowNumber % mTuplesPerPage;
 		return mPages[pageIndex].getRow(pageRowIndex);
 	}
 }
