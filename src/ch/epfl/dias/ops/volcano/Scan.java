@@ -12,7 +12,7 @@ public class Scan implements VolcanoOperator {
 
 	public Scan(Store store) {
 		if (store == null)
-			throw new NullPointerException();
+			throw new NullPointerException("SCAN: Null store object");
 
 		mCounter = 0;
 		mStore = store;

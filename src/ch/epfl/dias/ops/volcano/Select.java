@@ -1,29 +1,75 @@
 package ch.epfl.dias.ops.volcano;
 
 import ch.epfl.dias.ops.BinaryOp;
+import ch.epfl.dias.store.DataType;
 import ch.epfl.dias.store.row.DBTuple;
 
 public class Select implements VolcanoOperator {
 
-	// TODO: Add required structures
+	private final VolcanoOperator mChild;
+	private final BinaryOp mOp;
+	private final int mFieldNo;
+	private final int mValue;
 
 	public Select(VolcanoOperator child, BinaryOp op, int fieldNo, int value) {
-		// TODO: Implement
+		if (child == null)
+			throw new NullPointerException("SELECT: Null child operator");
+
+		mChild = child;
+		mOp = op;
+		mFieldNo = fieldNo;
+		mValue = value;
 	}
 
 	@Override
 	public void open() {
-		// TODO: Implement
+		mChild.open();
 	}
 
 	@Override
 	public DBTuple next() {
-		// TODO: Implement
-		return null;
+		DBTuple tuple = mChild.next();
+		while (!tuple.eof) {
+			if (tuple.fields.length >= mFieldNo)
+				throw new RuntimeException("SELECT: Invalid field index. Expected < " + tuple.fields.length + ", received " + mFieldNo);
+				
+			if (tuple.types[mFieldNo] != DataType.INT)
+				throw new RuntimeException("SELECT: Cannot compare Integer with " + tuple.types[mFieldNo].toString());
+
+			Integer value = tuple.getFieldAsInt(mFieldNo);
+			boolean result = false;
+			switch (mOp) {
+				case LT:
+					result = mValue < value;
+					break;
+				case LE:
+					result = mValue <= value;
+					break;
+				case EQ:
+					result = mValue == value;
+					break;
+				case NE:
+					result = mValue != value;
+					break;
+				case GT:
+					result = mValue > value;
+					break;
+				case GE:
+					result = mValue >= value;
+					break;
+				default:
+					throw new RuntimeException("SELECT: Unrecognized operator");
+			}
+			if (result)
+				return tuple;
+			else
+				tuple = mChild.next();
+		}
+		return tuple;
 	}
 
 	@Override
 	public void close() {
-		// TODO: Implement
+		mChild.close();
 	}
 }

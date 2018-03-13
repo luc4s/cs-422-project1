@@ -14,6 +14,10 @@ public class DBColumn {
 
 		mColumn = data;
 	}
+	
+	public int length() {
+		return mColumn.length;
+	}
 
 	public Integer[] getAsInteger() {
 		return (Integer[]) mColumn;

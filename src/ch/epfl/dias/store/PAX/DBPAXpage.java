@@ -27,6 +27,9 @@ public class DBPAXpage {
 	}
 	
 	public DBTuple getRow(int index) {
+		if (index >= mMinipages[0].length())
+			return new DBTuple();
+			
 		Object[] fields = new Object[mMinipages.length];
 		for (int i = 0; i < fields.length; ++i) {
 			Object value = null;

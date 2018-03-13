@@ -90,6 +90,9 @@ public class PAXStore extends Store {
 	@Override
 	public DBTuple getRow(int rowNumber) {
 		final int pageIndex = rowNumber % mTuplesPerPage;
+		if (pageIndex >= mPages.length)
+			return new DBTuple();
+
 		final int pageRowIndex = rowNumber - (pageIndex * mTuplesPerPage);
 		return mPages[pageIndex].getRow(pageRowIndex);
 	}
