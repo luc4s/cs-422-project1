@@ -78,7 +78,7 @@ public class ProjectAggregate implements BlockOperator {
 			case INT: 		tupleValue = Integer.valueOf((int) value); 		break;
 			case DOUBLE:	tupleValue = Double.valueOf(value); 			break;
 			case STRING:	tupleValue = Double.toString(value);        	break;
-			case BOOLEAN:	tupleValue = Boolean.valueOf(value > 0);	 	break;
+			case BOOLEAN:	tupleValue = Boolean.valueOf(value != 0);	 	break;
 		}
 		
 		return new DBColumn[] { new DBColumn(new Object[] { tupleValue }, mType) };

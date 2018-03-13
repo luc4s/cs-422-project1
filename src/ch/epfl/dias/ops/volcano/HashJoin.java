@@ -84,6 +84,7 @@ public class HashJoin implements VolcanoOperator {
 	@Override
 	public void close() {
 		mHashTable.clear();
+		mBuffer.clear();
 		mLeftChild.close();
 		mRightChild.close();
 	}
