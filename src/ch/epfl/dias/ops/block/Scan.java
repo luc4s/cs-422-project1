@@ -5,15 +5,21 @@ import ch.epfl.dias.store.column.DBColumn;
 
 public class Scan implements BlockOperator {
 
-	// TODO: Add required structures
+	private final ColumnStore mStore;
 
 	public Scan(ColumnStore store) {
-		// TODO: Implement
+		if (store == null)
+			throw new NullPointerException();
+
+		mStore = store;
 	}
 
 	@Override
 	public DBColumn[] execute() {
-		// TODO: Implement
-		return null;
+		int[] columnsToGet = new int[mStore.columnsCount()];
+		for (int i = 0; i < columnsToGet.length; ++i)
+			columnsToGet[i] = i;
+
+		return mStore.getColumns(columnsToGet);
 	}
 }

@@ -67,4 +67,8 @@ public class DBColumn {
 	public Double[] getAsDouble() {
 		return (Double[]) mColumn;
 	}
+	
+	public Object[] get() {
+		return mColumn;
+	}
 }

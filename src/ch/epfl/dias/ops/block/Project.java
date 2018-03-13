@@ -4,14 +4,25 @@ import ch.epfl.dias.store.column.DBColumn;
 
 public class Project implements BlockOperator {
 
-	// TODO: Add required structures
+	private final BlockOperator mChild;
+	private final int[] mColumns;
 
 	public Project(BlockOperator child, int[] columns) {
-		// TODO: Implement
+		if (child == null || columns == null)
+			throw new NullPointerException();
+		if (columns.length < 1)
+			throw new IllegalArgumentException("PROJECT: Must have at lease one column.");
+		
+		mChild = child;
+		mColumns = columns;
 	}
 
 	public DBColumn[] execute() {
-		// TODO: Implement
-		return null;
+		DBColumn[] cols = mChild.execute();
+		DBColumn[] filteredCols = new DBColumn[mColumns.length];
+		for (int i = 0; i < filteredCols.length; ++i)
+			filteredCols[i] = cols[mColumns[i]];
+		
+		return filteredCols;
 	}
 }

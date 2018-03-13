@@ -23,6 +23,10 @@ public class ColumnStore extends Store {
 		mData = new DBColumn[schema.length];
 		mSchema = schema;
 	}
+	
+	public int columnsCount() {
+		return mData.length;
+	}
 
 	@Override
 	public void load() {
