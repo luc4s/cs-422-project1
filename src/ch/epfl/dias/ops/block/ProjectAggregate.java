@@ -69,7 +69,7 @@ public class ProjectAggregate implements BlockOperator {
 				else if(col.type() == DataType.DOUBLE)
 					value = Arrays.stream(col.getAsInteger()).mapToDouble(d -> d.doubleValue()).sum();
 				else
-					throw new RuntimeException("PROJECT-AGGREGATE: Cannot compute maximum of type " + col.type());
+					throw new RuntimeException("PROJECT-AGGREGATE: Cannot compute sum of type " + col.type());
 				break;
 		}
 

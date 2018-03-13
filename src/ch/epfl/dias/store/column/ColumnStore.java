@@ -76,7 +76,7 @@ public class ColumnStore extends Store {
 	@Override
 	public DBColumn[] getColumns(int[] columnsToGet) {
 		if (columnsToGet == null)
-			throw new NullPointerException();
+			return mData;
 		
 		DBColumn[] columns = new DBColumn[columnsToGet.length];
 		for (int i = 0; i < columns.length; ++i)

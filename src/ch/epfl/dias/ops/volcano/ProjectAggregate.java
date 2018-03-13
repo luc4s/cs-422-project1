@@ -90,7 +90,7 @@ public class ProjectAggregate implements VolcanoOperator {
 				return tuple.getFieldAsDouble(mFieldNo);
 			case BOOLEAN:
 			case STRING:
-				throw new RuntimeException("Operation not applicable to type " + tuple.types[mFieldNo].toString());
+				throw new RuntimeException("PROJECT-AGGREGATE: Operation not applicable to type " + tuple.types[mFieldNo].toString());
 		}
 		return 0;
 	}
