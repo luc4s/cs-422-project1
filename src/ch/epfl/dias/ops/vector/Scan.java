@@ -9,12 +9,12 @@ public class Scan implements VectorOperator {
 	private final int mVectorSize;
 	private int mCounter;
 
-	public Scan(Store store) {
+	public Scan(Store store, int vectorSize) {
 		if (store == null)
 			throw new NullPointerException();
 		
 		mStore = store;
-		mVectorSize = 10;
+		mVectorSize = vectorSize;
 	}
 	
 	@Override
