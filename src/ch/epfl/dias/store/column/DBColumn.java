@@ -71,4 +71,11 @@ public class DBColumn {
 	public Object[] get() {
 		return mColumn;
 	}
+	
+	public Object get(int i) {
+		if (i < 0 || i > mColumn.length)
+			throw new IllegalArgumentException();
+		
+		return mColumn[i];
+	}
 }

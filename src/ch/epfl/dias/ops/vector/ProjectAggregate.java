@@ -37,8 +37,8 @@ public class ProjectAggregate implements VectorOperator {
 	public DBColumn[] next() {
 		double value = 0.0;
 		DBColumn[] cols = mChild.next();
-		if (cols == null)
-			return null;
+		if (cols.length == 0)
+			return cols;
 
 		if (mFieldNo > cols.length)
 			throw new RuntimeException("PROJECT-AGGREGATE: Field number exceeds columns count");

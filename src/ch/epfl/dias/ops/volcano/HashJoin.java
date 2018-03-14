@@ -57,7 +57,7 @@ public class HashJoin implements VolcanoOperator {
 		DBTuple right = mRightChild.next();
 		while (!right.eof) {
 			LinkedList<DBTuple> bucket = mHashTable.get(right.fields[mRightFieldNo]);
-			if (bucket != null) {
+			if (bucket != null && !bucket.isEmpty()) {
 				for (DBTuple left : bucket) {
 					if (compareFields(left, right)) {
 						Object[] fieldList = new Object[left.fields.length + right.fields.length];
@@ -83,8 +83,8 @@ public class HashJoin implements VolcanoOperator {
 
 	@Override
 	public void close() {
-		mHashTable.clear();
-		mBuffer.clear();
+		mHashTable = null;
+		mBuffer = null;
 		mLeftChild.close();
 		mRightChild.close();
 	}

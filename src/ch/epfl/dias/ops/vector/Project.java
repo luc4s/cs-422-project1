@@ -35,6 +35,9 @@ public class Project implements VectorOperator {
 	@Override
 	public DBColumn[] next() {
 		DBColumn[] cols = mChild.next();
+		if (cols.length == 0)
+			return cols;
+
 		DBColumn[] selected = new DBColumn[mFieldsNo.length];
 		for (int i = 0; i < selected.length; i++)
 			selected[i] = cols[mFieldsNo[i]];

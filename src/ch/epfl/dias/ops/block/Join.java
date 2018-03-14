@@ -59,10 +59,10 @@ public class Join implements BlockOperator {
 			
 			for (Integer index : bucket) {
 				for (int j = 0; j < left.length; ++j)
-					joinedColumns.get(j).add(left[j].get()[index]);
+					joinedColumns.get(j).add(left[j].get(index));
 
 				for (int j = left.length; j < joinedColumns.size(); ++j)
-					joinedColumns.get(j).add(right[j - left.length].get()[i]);
+					joinedColumns.get(j).add(right[j - left.length].get(i));
 			}
 		}
 		

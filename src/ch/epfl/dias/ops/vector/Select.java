@@ -34,6 +34,9 @@ public class Select implements VectorOperator {
 	@Override
 	public DBColumn[] next() {
 		DBColumn[] cols = mChild.next();
+		if (cols.length == 0)
+			return cols;
+
 		if (cols[mFieldNo].type() != DataType.INT)
 			throw new UnsupportedOperationException("SELECT: Can only perform on Integer fields");
 
