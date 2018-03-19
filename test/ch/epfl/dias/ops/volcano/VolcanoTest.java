@@ -176,4 +176,68 @@ public class VolcanoTest {
 	    int output = result.getFieldAsInt(0);
 	    assertEquals(3, output);
 	}
+	
+	@Test
+	public void testMin() {
+	    ch.epfl.dias.ops.volcano.Scan scan = new ch.epfl.dias.ops.volcano.Scan(rowstoreData);
+	    ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(scan, Aggregate.MIN, DataType.INT, 0);
+	    
+	    agg.open();
+		DBTuple result = agg.next();
+		int output = result.getFieldAsInt(0);
+		assertEquals(1, output);
+	}
+
+	@Test
+	public void testMax() {
+	    ch.epfl.dias.ops.volcano.Scan scan = new ch.epfl.dias.ops.volcano.Scan(rowstoreData);
+	    ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(scan, Aggregate.MAX, DataType.INT, 0);
+	    
+	    agg.open();
+		DBTuple result = agg.next();
+		int output = result.getFieldAsInt(0);
+		assertEquals(10, output);
+	}
+
+	@Test
+	public void testAverage() {
+	    ch.epfl.dias.ops.volcano.Scan scan = new ch.epfl.dias.ops.volcano.Scan(rowstoreData);
+	    ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(scan, Aggregate.AVG, DataType.DOUBLE, 1);
+	    
+	    agg.open();
+		DBTuple result = agg.next();
+		double output = result.getFieldAsDouble(0);
+		assertEquals(2.0, output, 0.0);
+	}
+
+	@Test
+	public void testSum() {
+	    ch.epfl.dias.ops.volcano.Scan scan = new ch.epfl.dias.ops.volcano.Scan(rowstoreData);
+	    ch.epfl.dias.ops.volcano.ProjectAggregate agg = new ch.epfl.dias.ops.volcano.ProjectAggregate(scan, Aggregate.SUM, DataType.INT, 0);
+	    
+	    agg.open();
+		DBTuple result = agg.next();
+		int output = result.getFieldAsInt(0);
+		assertEquals(55, output);
+	}
+
+	@Test
+	public void customTest(){  
+	    ch.epfl.dias.ops.volcano.Scan scan = new ch.epfl.dias.ops.volcano.Scan(rowstoreData);
+	    ch.epfl.dias.ops.volcano.Select sel = new ch.epfl.dias.ops.volcano.Select(scan, BinaryOp.LE, 0, 4);
+
+	    ch.epfl.dias.ops.volcano.Scan scan2 = new ch.epfl.dias.ops.volcano.Scan(rowstoreData);
+	    ch.epfl.dias.ops.volcano.Select sel2 = new ch.epfl.dias.ops.volcano.Select(scan2, BinaryOp.GT, 0, 8);
+	    
+
+	    HashJoin join = new HashJoin(sel, sel2, 1, 1);
+	    ProjectAggregate agg = new ProjectAggregate(join, Aggregate.COUNT, DataType.INT,0);
+	
+		agg.open();
+		
+		// This query should return only one result
+		DBTuple result = agg.next();
+		int output = result.getFieldAsInt(0);
+		assertEquals(8, output);
+	}
 }

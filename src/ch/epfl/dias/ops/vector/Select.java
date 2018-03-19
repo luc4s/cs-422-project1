@@ -50,11 +50,11 @@ public class Select implements VectorOperator {
 			boolean result = false;
 			switch (mOp) {
 				case LT: result = value < mValue;  break;
-				case LE: result = value <= mValue; break;
+				case LE: result = value <= mValue; break;				
 				case EQ: result = value == mValue; break;
 				case NE: result = value != mValue; break;
-				case GE: result = value >= mValue; break;
 				case GT: result = value > mValue;  break;
+				case GE: result = value >= mValue; break;
 				default:
 					throw new RuntimeException("SELECT: Unsupported operator");
 			}

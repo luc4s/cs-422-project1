@@ -148,5 +148,82 @@ public class VectorTest {
 
 		assertTrue(output == 3);
 	}
+	
+	@Test
+	public void testMin() {
+		Scan scan = new Scan(columnstoreData, 10);
+		ProjectAggregate agg = new ProjectAggregate(scan, Aggregate.MIN, DataType.INT, 0);
 
+		agg.open();
+		DBColumn[] result = agg.next();
+
+		// This query should return only one result
+		int output = result[0].getAsInteger()[0];
+
+		assertEquals(1, output);
+	}
+	
+	@Test
+	public void testMax() {
+		Scan scan = new Scan(columnstoreData, 10);
+		ProjectAggregate agg = new ProjectAggregate(scan, Aggregate.MAX, DataType.INT, 0);
+
+		agg.open();
+		DBColumn[] result = agg.next();
+
+		// This query should return only one result
+		int output = result[0].getAsInteger()[0];
+
+		assertEquals(10, output);
+	}
+	
+	@Test
+	public void testAverage() {
+		Scan scan = new Scan(columnstoreData, 10);
+		ProjectAggregate agg = new ProjectAggregate(scan, Aggregate.AVG, DataType.DOUBLE, 1);
+
+		agg.open();
+		DBColumn[] result = agg.next();
+
+		// This query should return only one result
+		double output = result[0].getAsDouble()[0];
+
+		assertEquals(2.0, output, 0.0);
+	}
+	
+	@Test
+	public void testSum() {
+		Scan scan = new Scan(columnstoreData, 10);
+		ProjectAggregate agg = new ProjectAggregate(scan, Aggregate.SUM, DataType.STRING, 0);
+
+		agg.open();
+		DBColumn[] result = agg.next();
+
+		// This query should return only one result
+		String output = result[0].getAsString()[0];
+
+		assertEquals("55.0", output);
+	}
+	
+	@Test
+	public void customTest() {
+		Scan scanOrder = new Scan(columnstoreData, 10);
+		Scan scanLineitem = new Scan(columnstoreData, 10);
+
+		/* Filtering on both sides */
+		Select selOrder = new Select(scanOrder, BinaryOp.GT, 0, 0);
+		Select selLineitem = new Select(scanLineitem, BinaryOp.LE, 0, 10);
+
+		Join join = new Join(selLineitem, selOrder, 1, 1);
+		ProjectAggregate agg = new ProjectAggregate(join, Aggregate.COUNT,
+				DataType.INT, 0);
+
+		agg.open();
+		DBColumn[] result = agg.next();
+
+		// This query should return only one result
+		int output = result[0].getAsInteger()[0];
+
+		assertEquals(100, output);
+	}
 }

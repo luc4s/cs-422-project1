@@ -4,9 +4,7 @@ import java.util.Arrays;
 
 import ch.epfl.dias.ops.Aggregate;
 import ch.epfl.dias.store.DataType;
-import ch.epfl.dias.store.Store;
 import ch.epfl.dias.store.column.DBColumn;
-import ch.epfl.dias.store.row.DBTuple;
 
 public class ProjectAggregate implements VectorOperator {
 
@@ -38,7 +36,7 @@ public class ProjectAggregate implements VectorOperator {
 		double value = 0.0;
 		DBColumn[] cols = mChild.next();
 		if (cols.length == 0)
-			return cols;
+			return mOp == Aggregate.COUNT ? new DBColumn[] { new DBColumn(new Object[] { 0 }, mType) } : cols;
 
 		if (mFieldNo > cols.length)
 			throw new RuntimeException("PROJECT-AGGREGATE: Field number exceeds columns count");

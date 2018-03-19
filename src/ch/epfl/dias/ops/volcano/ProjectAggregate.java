@@ -2,7 +2,6 @@ package ch.epfl.dias.ops.volcano;
 
 import ch.epfl.dias.ops.Aggregate;
 import ch.epfl.dias.store.DataType;
-import ch.epfl.dias.store.Store;
 import ch.epfl.dias.store.row.DBTuple;
 
 public class ProjectAggregate implements VolcanoOperator {
@@ -35,27 +34,28 @@ public class ProjectAggregate implements VolcanoOperator {
 	public DBTuple next() {
 		double value = 0.0;
 		DBTuple tuple = mChild.next();
+		if (tuple.eof)
+			return mOp == Aggregate.COUNT ? new DBTuple(new Object[] { 0 }, new DataType[] { mType }) : tuple;
+
 		int counter = 0;
 		while (!tuple.eof) {
 			switch (mOp) {
 				case AVG:
 					// Incremental average
-					value = value + (getFieldValue(tuple) - value) / ++counter;
-					tuple = mChild.next();
+					value += (getFieldValue(tuple) - value) / ++counter;
 					break;
 				case COUNT:
 					value = ++counter;
-					tuple = mChild.next();
 					break;
 				case MIN:
 					final double minValue = getFieldValue(tuple);
-					if (counter == 0 || minValue < value)
+					if (counter++ == 0 || minValue < value)
 						value = minValue;
 
 					break;
 				case MAX:
 					final double maxValue = getFieldValue(tuple);
-					if (counter == 0 || maxValue > value)
+					if (counter++ == 0 || maxValue > value)
 						value = maxValue;
 
 					break;
@@ -65,6 +65,7 @@ public class ProjectAggregate implements VolcanoOperator {
 				default:
 					throw new RuntimeException("PROJECT-AGGREGATE: Unrecognized aggregate operator");
 			}
+			tuple = mChild.next();
 		}
 		
 		Object tupleValue = null;

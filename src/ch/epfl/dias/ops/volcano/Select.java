@@ -39,12 +39,12 @@ public class Select implements VolcanoOperator {
 			Integer value = tuple.getFieldAsInt(mFieldNo);
 			boolean result = false;
 			switch (mOp) {
-				case LT: result = mValue < value;  break;
-				case LE: result = mValue <= value; break;				
-				case EQ: result = mValue == value; break;
-				case NE: result = mValue != value; break;
-				case GT: result = mValue > value;  break;
-				case GE: result = mValue >= value; break;
+				case LT: result = value < mValue;  break;
+				case LE: result = value <= mValue; break;				
+				case EQ: result = value == mValue; break;
+				case NE: result = value != mValue; break;
+				case GT: result = value > mValue;  break;
+				case GE: result = value >= mValue; break;
 				default:
 					throw new RuntimeException("SELECT: Unrecognized operator");
 			}

@@ -33,6 +33,9 @@ public class ProjectAggregate implements BlockOperator {
 		if (mFieldNo > cols.length)
 			throw new RuntimeException("PROJECT-AGGREGATE: Field number exceeds columns count");
 		
+		if (cols.length == 0)
+			return mOp == Aggregate.COUNT ?  new DBColumn[] { new DBColumn(new Object[] { 0 }, mType) } : cols;
+		
 		DBColumn col = cols[mFieldNo];
 	
 		switch (mOp) {
