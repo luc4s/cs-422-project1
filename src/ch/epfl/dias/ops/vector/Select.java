@@ -45,7 +45,7 @@ public class Select implements VectorOperator {
 		for (int i = 0; i < cols.length; ++i)
 			filtered.add(new ArrayList<>());
 
-		for (int i = 0; i < cols[mFieldNo].length();++i) {
+		for (int i = 0; i < cols[mFieldNo].length(); ++i) {
 			final int value = values[i];
 			boolean result = false;
 			switch (mOp) {

@@ -34,8 +34,8 @@ public class Scan implements VectorOperator {
 		for (int i = 0; i < cols.length; ++i) {
 			final int colLength = cols[i].length();
 			Object[] objects = new Object[mVectorSize < colLength ? mVectorSize : colLength];
-			for (int j = startIndex; j < mVectorSize && j < colLength; ++j)
-				objects[j] = cols[i].get()[j];
+			for (int j = startIndex, k = 0; j < startIndex + mVectorSize && j < colLength; ++j)
+				objects[k++] = cols[i].get()[j];
 			
 			vector[i] = new DBColumn(objects, cols[i].type());
 		}
