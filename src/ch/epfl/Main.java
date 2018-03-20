@@ -62,17 +62,10 @@ public class Main {
 		 ColumnStore columnstoreData = new ColumnStore(schema, "input/data.csv", ",");
 		 columnstoreData.load();
 
-//		 testDSMvector();
+		 testDSMvector();
 //		 testNSMVolcano();
 //		 testPAXVolcano();
-		 testDSMcolumnar();
-
-		
-		 ch.epfl.dias.ops.block.Scan blockScan = new ch.epfl.dias.ops.block.Scan(columnstoreData);
-		 ch.epfl.dias.ops.block.Select sel = new ch.epfl.dias.ops.block.Select(blockScan, BinaryOp.EQ, 3, 6);
-		 ch.epfl.dias.ops.block.ProjectAggregate agg = new ch.epfl.dias.ops.block.ProjectAggregate(sel, Aggregate.COUNT, DataType.INT, 2);
-		 DBColumn[] result = agg.execute();
-		 int output = result[0].getAsInteger()[0];
+//		 testDSMcolumnar();
 	}
 	
 	public static void testNSMVolcano() {
@@ -93,7 +86,7 @@ public class Main {
 		 long time = System.nanoTime();
 		 project.open();
 		 while (!(project.next()).eof) {}
-		 System.out.println("\t executed in " + parseTime(System.nanoTime() - time));
+		 System.out.println(parseTime(System.nanoTime() - time));
 		 
 		 /* QUERY 2 */
 		 scanLines = new ch.epfl.dias.ops.volcano.Scan(lines);
@@ -105,7 +98,7 @@ public class Main {
 		 System.out.println("SELECT L.L_QUANTITY, O.O_TOTALPRICE FROM LINEITEM L, ORDERS O WHERE L.ORDERKEY = O.ORDERKEY");
 		 project.open();
 		 while (!(project.next()).eof) {}
-		 System.out.println("\t executed in " + parseTime(System.nanoTime() - time));
+		 System.out.println(parseTime(System.nanoTime() - time));
 		 
 		 /*  QUERY 3 */
 		 scanLines = new ch.epfl.dias.ops.volcano.Scan(lines);
@@ -116,7 +109,7 @@ public class Main {
 		 System.out.println("SELECT AVG(L_TAX) FROM LINEITEM WHERE L_QUANTITY < 50");
 		 agg.open();
 		 while (!(agg.next()).eof) {}
-		 System.out.println("\t executed in " + parseTime(System.nanoTime() - time));
+		 System.out.println(parseTime(System.nanoTime() - time));
 
 		 /* QUERY 4 */
 		 scanLines = new ch.epfl.dias.ops.volcano.Scan(lines);
@@ -128,7 +121,7 @@ public class Main {
 		 System.out.println("SELECT MAX(O.O_TOTALPRICE) FROM LINEITEM L, ORDERS O WHERE L.ORDERKEY = O.ORDERKEY");
 		 agg.open();
 		 while (!(agg.next()).eof) {}
-		 System.out.println("\t executed in " + parseTime(System.nanoTime() - time));
+		 System.out.println(parseTime(System.nanoTime() - time));
 	}
 	
 	public static void testPAXVolcano() {
@@ -149,7 +142,7 @@ public class Main {
 		 long time = System.nanoTime();
 		 project.open();
 		 while (!(project.next()).eof) {}
-		 System.out.println("\t executed in " + parseTime(System.nanoTime() - time));
+		 System.out.println(parseTime(System.nanoTime() - time));
 		 
 		 /* QUERY 2 */
 		 scanLines = new ch.epfl.dias.ops.volcano.Scan(lines);
@@ -161,7 +154,7 @@ public class Main {
 		 System.out.println("SELECT L.L_QUANTITY, O.O_TOTALPRICE FROM LINEITEM L, ORDERS O WHERE L.ORDERKEY = O.ORDERKEY");
 		 project.open();
 		 while (!(project.next()).eof) {}
-		 System.out.println("\t executed in " + parseTime(System.nanoTime() - time));
+		 System.out.println(parseTime(System.nanoTime() - time));
 		 
 		 /*  QUERY 3 */
 		 scanLines = new ch.epfl.dias.ops.volcano.Scan(lines);
@@ -172,7 +165,7 @@ public class Main {
 		 System.out.println("SELECT AVG(L_TAX) FROM LINEITEM WHERE L_QUANTITY < 50");
 		 agg.open();
 		 while (!(agg.next()).eof) {}
-		 System.out.println("\t executed in " + parseTime(System.nanoTime() - time));
+		 System.out.println(parseTime(System.nanoTime() - time));
 
 		 /* QUERY 4 */
 		 scanLines = new ch.epfl.dias.ops.volcano.Scan(lines);
@@ -184,7 +177,7 @@ public class Main {
 		 System.out.println("SELECT MAX(O.O_TOTALPRICE) FROM LINEITEM L, ORDERS O WHERE L.ORDERKEY = O.ORDERKEY");
 		 agg.open();
 		 while (!(agg.next()).eof) {}
-		 System.out.println("\t executed in " + parseTime(System.nanoTime() - time));
+		 System.out.println(parseTime(System.nanoTime() - time));
 	}
 
 	public static void testDSMcolumnar() {
@@ -204,7 +197,7 @@ public class Main {
 		 System.out.println("SELECT L_ORDERKEY, L_PARTKEY, L_SUPPKEY, L_SHIPMODE, L_COMMENT FROM LINEITEM WHERE L_QUANTITY < 50");
 		 long time = System.nanoTime();
 		 project.execute();
-		 System.out.println("\t executed in " + parseTime(System.nanoTime() - time));
+		 System.out.println(parseTime(System.nanoTime() - time));
 		 
 		 /* QUERY 2 */
 		 scanLines = new ch.epfl.dias.ops.block.Scan(lines);
@@ -215,7 +208,7 @@ public class Main {
 		 time = System.nanoTime();
 		 System.out.println("SELECT L.L_QUANTITY, O.O_TOTALPRICE FROM LINEITEM L, ORDERS O WHERE L.ORDERKEY = O.ORDERKEY");
 		 project.execute();
-		 System.out.println("\t executed in " + parseTime(System.nanoTime() - time));
+		 System.out.println(parseTime(System.nanoTime() - time));
 		 
 		 /*  QUERY 3 */
 		 scanLines = new ch.epfl.dias.ops.block.Scan(lines);
@@ -225,7 +218,7 @@ public class Main {
 		 time = System.nanoTime();
 		 System.out.println("SELECT AVG(L_TAX) FROM LINEITEM WHERE L_QUANTITY < 50");
 		 agg.execute();
-		 System.out.println("\t executed in " + parseTime(System.nanoTime() - time));
+		 System.out.println(parseTime(System.nanoTime() - time));
 
 		 /* QUERY 4 */
 		 scanLines = new ch.epfl.dias.ops.block.Scan(lines);
@@ -236,7 +229,7 @@ public class Main {
 		 time = System.nanoTime();
 		 System.out.println("SELECT MAX(O.O_TOTALPRICE) FROM LINEITEM L, ORDERS O WHERE L.ORDERKEY = O.ORDERKEY");
 		 agg.execute();
-		 System.out.println("\t executed in " + parseTime(System.nanoTime() - time));
+		 System.out.println(parseTime(System.nanoTime() - time));
 	}
 
 	public static void testDSMvector() {
@@ -248,51 +241,52 @@ public class Main {
 		 orders.load();
 		 System.out.println("[DSM] Datasets loaded.");
 
+		 final int vecSize = 7;
 		 /* QUERY 1 */
-		 ch.epfl.dias.ops.vector.Scan scanLines = new ch.epfl.dias.ops.vector.Scan(lines, 1000);
+		 ch.epfl.dias.ops.vector.Scan scanLines = new ch.epfl.dias.ops.vector.Scan(lines, vecSize);
 		 ch.epfl.dias.ops.vector.Select select = new ch.epfl.dias.ops.vector.Select(scanLines, BinaryOp.LT, 4, 50);
 		 ch.epfl.dias.ops.vector.Project project = new ch.epfl.dias.ops.vector.Project(select, new int[] { 0, 1, 2, 14, 15 } );
-		 
+
 		 System.out.println("SELECT L_ORDERKEY, L_PARTKEY, L_SUPPKEY, L_SHIPMODE, L_COMMENT FROM LINEITEM WHERE L_QUANTITY < 50");
 		 long time = System.nanoTime();
 		 project.open();
-		 while ((project.next()).length > 0) {}
-		 System.out.println("\t executed in " + parseTime(System.nanoTime() - time));
+		 while ((project.next())[0].length() > 0) {}
+		 System.out.println(parseTime(System.nanoTime() - time));
 		 
 		 /* QUERY 2 */
-		 scanLines = new ch.epfl.dias.ops.vector.Scan(lines, 1000);
-		 ch.epfl.dias.ops.vector.Scan scanOrders = new ch.epfl.dias.ops.vector.Scan(lines, 1000);
+		 scanLines = new ch.epfl.dias.ops.vector.Scan(lines, vecSize);
+		 ch.epfl.dias.ops.vector.Scan scanOrders = new ch.epfl.dias.ops.vector.Scan(lines, vecSize);
 		 ch.epfl.dias.ops.vector.Join join = new ch.epfl.dias.ops.vector.Join(scanLines, scanOrders, 0, 0);
 		 project = new ch.epfl.dias.ops.vector.Project(join, new int[] { 4, 19 } );
 
+		 System.out.println("SELECT L.L_QUANTITY, O.O_TOTALPRICE FROM LINEITEM L, ORDERS O WHERE L.L_ORDERKEY = O.O_ORDERKEY");
 		 time = System.nanoTime();
-		 System.out.println("SELECT L.L_QUANTITY, O.O_TOTALPRICE FROM LINEITEM L, ORDERS O WHERE L.ORDERKEY = O.ORDERKEY");
 		 project.open();
-		 while ((project.next()).length > 0) {}
-		 System.out.println("\t executed in " + parseTime(System.nanoTime() - time));
+		 while ((project.next())[0].length() > 0) {}
+		 System.out.println(parseTime(System.nanoTime() - time));
 		 
 		 /*  QUERY 3 */
-		 scanLines = new ch.epfl.dias.ops.vector.Scan(lines, 1000);
+		 scanLines = new ch.epfl.dias.ops.vector.Scan(lines, vecSize);
 		 select = new ch.epfl.dias.ops.vector.Select(scanLines, BinaryOp.LT, 4, 50);
 		 ch.epfl.dias.ops.vector.ProjectAggregate agg = new ch.epfl.dias.ops.vector.ProjectAggregate(select, Aggregate.AVG, DataType.DOUBLE, 7);
 
-		 time = System.nanoTime();
 		 System.out.println("SELECT AVG(L_TAX) FROM LINEITEM WHERE L_QUANTITY < 50");
+		 time = System.nanoTime();
 		 agg.open();
-		 while ((agg.next()).length > 0) {}
-		 System.out.println("\t executed in " + parseTime(System.nanoTime() - time));
+		 while ((agg.next())[0].length() > 0) {}
+		 System.out.println(parseTime(System.nanoTime() - time));
 
 		 /* QUERY 4 */
-		 scanLines = new ch.epfl.dias.ops.vector.Scan(lines, 1000);
-		 scanOrders = new ch.epfl.dias.ops.vector.Scan(lines, 1000);
+		 scanLines = new ch.epfl.dias.ops.vector.Scan(lines, vecSize);
+		 scanOrders = new ch.epfl.dias.ops.vector.Scan(lines, vecSize);
 		 join = new ch.epfl.dias.ops.vector.Join(scanLines, scanOrders, 0, 0);
 		 agg = new ch.epfl.dias.ops.vector.ProjectAggregate(join, Aggregate.MAX, DataType.DOUBLE, 19);
 
-		 time = System.nanoTime();
 		 System.out.println("SELECT MAX(O.O_TOTALPRICE) FROM LINEITEM L, ORDERS O WHERE L.ORDERKEY = O.ORDERKEY");
+		 time = System.nanoTime();
 		 agg.open();
-		 while ((agg.next()).length > 0) {}
-		 System.out.println("\t executed in " + parseTime(System.nanoTime() - time));
+		 while ((agg.next())[0].length() > 0) {}
+		 System.out.println(parseTime(System.nanoTime() - time));
 	}
 	
 	private static String parseTime(long time) {

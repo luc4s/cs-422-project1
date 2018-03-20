@@ -1,7 +1,5 @@
 package ch.epfl.dias.ops.vector;
 
-import java.util.Arrays;
-
 import ch.epfl.dias.ops.Aggregate;
 import ch.epfl.dias.store.DataType;
 import ch.epfl.dias.store.column.DBColumn;
@@ -48,9 +46,9 @@ public class ProjectAggregate implements VectorOperator {
 			switch (mOp) {
 				case AVG: 
 					if (col.type() == DataType.INT)
-						value += (Arrays.stream(col.getAsInteger()).mapToInt(i -> i.intValue()).average().getAsDouble() - value) / ++counter;
+						value += (col.intStream().average().getAsDouble() - value) / ++counter;
 					else if(col.type() == DataType.DOUBLE)
-						value += (Arrays.stream(col.getAsDouble()).mapToDouble(d -> d.doubleValue()).average().getAsDouble() - value) / ++counter;
+						value += (col.doubleStream().average().getAsDouble() - value) / ++counter;
 					else
 						throw new RuntimeException("PROJECT-AGGREGATE: Cannot compute average of type " + col.type());
 					break;
@@ -59,9 +57,9 @@ public class ProjectAggregate implements VectorOperator {
 					break;
 				case MIN:
 					if (col.type() == DataType.INT)
-						temp = Arrays.stream(col.getAsInteger()).mapToInt(i -> i.intValue()).min().getAsInt();
+						temp = col.intStream().min().getAsInt();
 					else if(col.type() == DataType.DOUBLE)
-						temp = Arrays.stream(col.getAsInteger()).mapToDouble(d -> d.doubleValue()).min().getAsDouble();
+						temp = col.doubleStream().min().getAsDouble();
 					else
 						throw new RuntimeException("PROJECT-AGGREGATE: Cannot compute minimum of type " + col.type());
 	
@@ -70,9 +68,9 @@ public class ProjectAggregate implements VectorOperator {
 					break;
 				case MAX:
 					if (col.type() == DataType.INT)
-						temp = Arrays.stream(col.getAsInteger()).mapToInt(i -> i.intValue()).max().getAsInt();
+						temp = col.intStream().max().getAsInt();
 					else if(col.type() == DataType.DOUBLE)
-						temp = Arrays.stream(col.getAsInteger()).mapToDouble(d -> d.doubleValue()).max().getAsDouble();
+						temp = col.doubleStream().max().getAsDouble();
 					else
 						throw new RuntimeException("PROJECT-AGGREGATE: Cannot compute maximum of type " + col.type());
 	
@@ -81,9 +79,9 @@ public class ProjectAggregate implements VectorOperator {
 					break;
 				case SUM:
 					if (col.type() == DataType.INT)
-						value += Arrays.stream(col.getAsInteger()).mapToInt(i -> i.intValue()).sum();
+						value += col.intStream().sum();
 					else if(col.type() == DataType.DOUBLE)
-						value += Arrays.stream(col.getAsInteger()).mapToDouble(d -> d.doubleValue()).sum();
+						value += col.doubleStream().sum();
 					else
 						throw new RuntimeException("PROJECT-AGGREGATE: Cannot compute sum of type " + col.type());
 					break;

@@ -42,13 +42,16 @@ public class Select implements VectorOperator {
 		DBColumn[] cols = mChild.next();
 		int counter = 0;
 		int vecSize = cols[0].length();
+		
+		if (vecSize == 0)
+			return cols;
 
 		if (cols[mFieldNo].type() != DataType.INT)
 			throw new UnsupportedOperationException("SELECT: Can only perform on Integer fields");
 
 		DBColumn[] filtered = new DBColumn[cols.length];
 		for (int i = 0; i < cols.length; ++i)
-			filtered[i] = new DBColumn(cols[i].type());
+			filtered[i] = new DBColumn(cols[i].type(), cols[0].length());
 
 		while (counter < vecSize && cols[0].length() > 0) {
 	
@@ -76,7 +79,7 @@ public class Select implements VectorOperator {
 
 					filtered = new DBColumn[cols.length];
 					for (int j = 0; j < cols.length; ++j)
-						filtered[j] = new DBColumn(cols[j].type());
+						filtered[j] = new DBColumn(cols[j].type(), cols[0].length());
 				}
 			}
 
@@ -86,7 +89,9 @@ public class Select implements VectorOperator {
 		
 
 		if (!mBuffer.isEmpty()) {
-			mBuffer.addLast(filtered);
+			if (filtered[0].length() > 0)
+				mBuffer.addLast(filtered);
+
 			return mBuffer.removeFirst();
 		}
 		else

@@ -1,7 +1,5 @@
 package ch.epfl.dias.ops.block;
 
-import java.util.Arrays;
-
 import ch.epfl.dias.ops.Aggregate;
 import ch.epfl.dias.store.DataType;
 import ch.epfl.dias.store.column.DBColumn;
@@ -33,7 +31,7 @@ public class ProjectAggregate implements BlockOperator {
 		if (mFieldNo > cols.length)
 			throw new RuntimeException("PROJECT-AGGREGATE: Field number exceeds columns count");
 		
-		if (cols.length == 0)
+		if (cols[0].length() == 0)
 			return mOp == Aggregate.COUNT ?  new DBColumn[] { new DBColumn(new Object[] { 0 }, mType) } : cols;
 		
 		DBColumn col = cols[mFieldNo];
@@ -41,9 +39,9 @@ public class ProjectAggregate implements BlockOperator {
 		switch (mOp) {
 			case AVG: 
 				if (col.type() == DataType.INT)
-					value = Arrays.stream(col.getAsInteger()).mapToInt(i -> i.intValue()).average().getAsDouble();
+					value = col.intStream().average().getAsDouble();
 				else if(col.type() == DataType.DOUBLE)
-					value = Arrays.stream(col.getAsDouble()).mapToDouble(d -> d.doubleValue()).average().getAsDouble();
+					value = col.doubleStream().average().getAsDouble();
 				else
 					throw new RuntimeException("PROJECT-AGGREGATE: Cannot compute average of type " + col.type());
 				break;
@@ -52,25 +50,25 @@ public class ProjectAggregate implements BlockOperator {
 				break;
 			case MIN:
 				if (col.type() == DataType.INT)
-					value = Arrays.stream(col.getAsInteger()).mapToInt(i -> i.intValue()).min().getAsInt();
+					value = col.intStream().min().getAsInt();
 				else if(col.type() == DataType.DOUBLE)
-					value = Arrays.stream(col.getAsInteger()).mapToDouble(d -> d.doubleValue()).min().getAsDouble();
+					value = col.doubleStream().min().getAsDouble();
 				else
 					throw new RuntimeException("PROJECT-AGGREGATE: Cannot compute minimum of type " + col.type());
 				break;
 			case MAX:
 				if (col.type() == DataType.INT)
-					value = Arrays.stream(col.getAsInteger()).mapToInt(i -> i.intValue()).max().getAsInt();
+					value = col.intStream().max().getAsInt();
 				else if(col.type() == DataType.DOUBLE)
-					value = Arrays.stream(col.getAsInteger()).mapToDouble(d -> d.doubleValue()).max().getAsDouble();
+					value = col.doubleStream().max().getAsDouble();
 				else
 					throw new RuntimeException("PROJECT-AGGREGATE: Cannot compute maximum of type " + col.type());
 				break;
 			case SUM:
 				if (col.type() == DataType.INT)
-					value = Arrays.stream(col.getAsInteger()).mapToInt(i -> i.intValue()).sum();
+					value = col.intStream().sum();
 				else if(col.type() == DataType.DOUBLE)
-					value = Arrays.stream(col.getAsInteger()).mapToDouble(d -> d.doubleValue()).sum();
+					value = col.doubleStream().sum();
 				else
 					throw new RuntimeException("PROJECT-AGGREGATE: Cannot compute sum of type " + col.type());
 				break;

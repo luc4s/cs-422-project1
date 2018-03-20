@@ -25,24 +25,26 @@ public class Scan implements VectorOperator {
 	@Override
 	public DBColumn[] next() {
 		DBColumn[] cols = mStore.getColumns(null);
-		final int startIndex = mCounter++ * mVectorSize;
+		final int startIndex = (mCounter++) * mVectorSize;
 		
 		if (startIndex >= cols[0].length()) {
 			DBColumn[] emptyVec = new DBColumn[cols.length];
 			for (int i = 0; i < emptyVec.length; ++i)
-				emptyVec[i] = new DBColumn(cols[i].type());
+				emptyVec[i] = new DBColumn(cols[i].type(), mVectorSize);
 			
 			return emptyVec;
 		}
 		
 		DBColumn[] vector = new DBColumn[cols.length];
 		for (int i = 0; i < cols.length; ++i) {
-			final int colLength = cols[i].length();
-			Object[] objects = new Object[mVectorSize < colLength ? mVectorSize : colLength];
-			for (int j = startIndex, k = 0; j < startIndex + mVectorSize && j < colLength; ++j)
-				objects[k++] = cols[i].get()[j];
+			int colLength = cols[i].length();
+			int newLength = mVectorSize < colLength - startIndex ? mVectorSize : colLength - startIndex;
+			DBColumn dest = new DBColumn(cols[i].type(), newLength);
+			DBColumn src = cols[i];
+			for (int j = 0; j < newLength; ++j)
+				dest.append(src.get(startIndex + j));
 			
-			vector[i] = new DBColumn(objects, cols[i].type());
+			vector[i] = dest;
 		}
 		return vector;
 	}

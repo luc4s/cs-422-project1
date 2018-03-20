@@ -43,6 +43,17 @@ public class VectorTest {
 		columnstoreLineItem = new ColumnStore(lineitemSchema, "input/lineitem_small.csv", "\\|");
 		columnstoreLineItem.load();
 	}
+	
+	@Test
+	public void testScan() {
+		Scan scan = new Scan(columnstoreData, 2);
+
+		scan.open();
+		for (int i = 0; i < 5; i++)
+			scan.next();
+
+		assertEquals(0, scan.next()[0].length());
+	}
 
 	@Test
 	public void spTestData() {
@@ -119,7 +130,7 @@ public class VectorTest {
 		// This query should return only one result
 		int output = result[0].getAsInteger()[0];
 
-		assertTrue(output == 3);
+		assertEquals(3, output);
 	}
 
 	@Test
@@ -146,7 +157,7 @@ public class VectorTest {
 		// This query should return only one result
 		int output = result[0].getAsInteger()[0];
 
-		assertTrue(output == 3);
+		assertEquals(3, output);
 	}
 	
 	@Test
@@ -161,6 +172,7 @@ public class VectorTest {
 		int output = result[0].getAsInteger()[0];
 
 		assertEquals(1, output);
+		assertEquals(0, agg.next()[0].length());
 	}
 	
 	@Test
@@ -175,6 +187,7 @@ public class VectorTest {
 		int output = result[0].getAsInteger()[0];
 
 		assertEquals(10, output);
+		assertEquals(0, agg.next()[0].length());
 	}
 	
 	@Test
@@ -189,6 +202,7 @@ public class VectorTest {
 		double output = result[0].getAsDouble()[0];
 
 		assertEquals(2.0, output, 0.0);
+		assertEquals(0, agg.next()[0].length());
 	}
 	
 	@Test
@@ -203,6 +217,7 @@ public class VectorTest {
 		String output = result[0].getAsString()[0];
 
 		assertEquals("55.0", output);
+		assertEquals(0, agg.next()[0].length());
 	}
 	
 	@Test

@@ -154,6 +154,7 @@ public class VolcanoTest {
 	    DBTuple result = agg.next();
 	    int output = result.getFieldAsInt(0);
 	    assertTrue(output == 3);
+		assertTrue(agg.next().eof);
 	}
 	
 	@Test
@@ -175,6 +176,7 @@ public class VolcanoTest {
 	    DBTuple result = agg.next();
 	    int output = result.getFieldAsInt(0);
 	    assertEquals(3, output);
+		assertTrue(agg.next().eof);
 	}
 	
 	@Test
@@ -186,6 +188,7 @@ public class VolcanoTest {
 		DBTuple result = agg.next();
 		int output = result.getFieldAsInt(0);
 		assertEquals(1, output);
+		assertTrue(agg.next().eof);
 	}
 
 	@Test
@@ -197,6 +200,7 @@ public class VolcanoTest {
 		DBTuple result = agg.next();
 		int output = result.getFieldAsInt(0);
 		assertEquals(10, output);
+		assertTrue(agg.next().eof);
 	}
 
 	@Test
@@ -208,6 +212,7 @@ public class VolcanoTest {
 		DBTuple result = agg.next();
 		double output = result.getFieldAsDouble(0);
 		assertEquals(2.0, output, 0.0);
+		assertTrue(agg.next().eof);
 	}
 
 	@Test
@@ -219,6 +224,7 @@ public class VolcanoTest {
 		DBTuple result = agg.next();
 		int output = result.getFieldAsInt(0);
 		assertEquals(55, output);
+		assertTrue(agg.next().eof);
 	}
 
 	@Test
@@ -239,5 +245,6 @@ public class VolcanoTest {
 		DBTuple result = agg.next();
 		int output = result.getFieldAsInt(0);
 		assertEquals(8, output);
+		assertTrue(agg.next().eof);
 	}
 }

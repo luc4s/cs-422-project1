@@ -1,16 +1,9 @@
 package ch.epfl.dias.ops.block;
 
-import ch.epfl.dias.ops.BinaryOp;
-import ch.epfl.dias.store.DataType;
 import ch.epfl.dias.store.column.DBColumn;
-import ch.epfl.dias.store.row.DBTuple;
 
 import java.util.LinkedList;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
 public class Join implements BlockOperator {
 
@@ -49,9 +42,9 @@ public class Join implements BlockOperator {
 
 		DBColumn[] joinedColumns = new DBColumn[left.length + right.length];
 		for (int i = 0; i < left.length; ++i)
-			joinedColumns[i] = new DBColumn(left[i].type());
+			joinedColumns[i] = new DBColumn(left[i].type(), left[0].length());
 		for (int i = 0; i < right.length; ++i)
-			joinedColumns[left.length + i] = new DBColumn(right[i].type());
+			joinedColumns[left.length + i] = new DBColumn(right[i].type(), right[0].length());
 
 		DBColumn rightCol = right[mRightFieldNo];
 		for (int i = 0; i < rightCol.length(); ++i) {

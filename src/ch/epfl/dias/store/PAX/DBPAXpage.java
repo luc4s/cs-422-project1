@@ -35,16 +35,16 @@ public class DBPAXpage {
 			Object value = null;
 			switch (mSchema[i]) {
 				case INT:
-					value = mMinipages[i].getAsInteger()[index];
+					value = mMinipages[i].get(index);
 					break;
 				case DOUBLE:
-					value = mMinipages[i].getAsDouble()[index];
+					value = mMinipages[i].get(index);
 					break;
 				case BOOLEAN:
-					value = mMinipages[i].getAsBoolean()[index];
+					value = mMinipages[i].get(index);
 					break;
 				case STRING:
-					value = mMinipages[i].getAsString()[index];
+					value = mMinipages[i].get(index);
 					break;
 			}
 			fields[i] = value;	

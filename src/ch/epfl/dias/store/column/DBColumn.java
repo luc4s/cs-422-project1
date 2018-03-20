@@ -2,12 +2,19 @@ package ch.epfl.dias.store.column;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 
 import ch.epfl.dias.store.DataType;
 
 public class DBColumn {
 	private ArrayList<Object> mColumn;
+	
 	private final DataType mType;
+	
+	private boolean mDirty;
+	private IntStream mIntStream;
+	private DoubleStream mDoubleStream;
 	
 	public DBColumn(DataType type) {
 		if (type == null)
@@ -15,42 +22,23 @@ public class DBColumn {
 
 		mColumn = new ArrayList<>();
 		mType = type;
+		mDirty = false;
+		mIntStream = null;
+		mDoubleStream = null;
+	}
+	
+	public DBColumn(DataType type, int reserved) {
+		this(type);
+		mColumn = new ArrayList<>(reserved);
 	}
 
 	public DBColumn(Object[] data, DataType type) {
-		if (data == null || type == null)
-			throw new NullPointerException();
+		this(type);
 
-		mColumn = new ArrayList<>();
-		switch (type) {
-			case INT: 
-				Integer[] intColumn = new Integer[data.length];
-				for (int i = 0; i < data.length; ++i)
-					intColumn[i] = (Integer)data[i];
-				mColumn.addAll(Arrays.asList(intColumn));
-				break;
-			case DOUBLE:
-				Double[] doubleColumn = new Double[data.length];
-				for (int i = 0; i < data.length; ++i)
-					doubleColumn[i] = (Double)data[i];
-				mColumn.addAll(Arrays.asList(doubleColumn));
-				break;
-			case BOOLEAN:
-				Boolean[] booleanColumn = new Boolean[data.length];
-				for (int i = 0; i < data.length; ++i)
-					booleanColumn[i] = (Boolean)data[i];
-				mColumn.addAll(Arrays.asList(booleanColumn));
-				break;
-			case STRING:
-				String[] stringColumn = new String[data.length];
-				for (int i = 0; i < data.length; ++i)
-					stringColumn[i] = (String)data[i];
-				mColumn.addAll(Arrays.asList(stringColumn));
-				break;
-			default:
-				throw new RuntimeException("Unrecognized type");
-		}
-		mType = type;
+		mColumn = new ArrayList<>(data.length);
+		for (int i = 0; i < data.length; ++i)
+			mColumn.add(data[i]);
+		createStreams();
 	}
 	
 	public int length() {
@@ -82,13 +70,33 @@ public class DBColumn {
 	}
 	
 	public Object get(int i) {
-		if (i < 0 || i > mColumn.size())
-			throw new IllegalArgumentException();
-		
 		return mColumn.get(i);
 	}
 	
 	public void append(Object o) {
 		mColumn.add(o);
+		mDirty = true;
+	}
+	
+	public IntStream intStream() {
+		if (mDirty)
+			createStreams();
+		
+		return mIntStream;
+	}
+	
+	public DoubleStream doubleStream() {
+		if (mDirty)
+			createStreams();
+		
+		return mDoubleStream;
+	}
+	
+	private void createStreams() {
+		mDirty = false;
+		if (mType == DataType.INT)
+			mIntStream = mColumn.stream().mapToInt(i -> ((Integer) i).intValue()).parallel();
+		else if (mType == DataType.DOUBLE)
+			mDoubleStream = mColumn.stream().mapToDouble(i -> ((Double) i).intValue()).parallel();
 	}
 }

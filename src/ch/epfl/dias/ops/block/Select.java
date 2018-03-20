@@ -33,7 +33,7 @@ public class Select implements BlockOperator {
 
 		DBColumn[] filtered = new DBColumn[cols.length];
 		for (int i = 0; i < cols.length; ++i)
-			filtered[i] = new DBColumn(cols[i].type());
+			filtered[i] = new DBColumn(cols[i].type(), cols[0].length());
 		
 		for (int i = 0; i < cols[0].length(); ++i) {
 			final int value = (Integer)cols[mFieldNo].get(i);
