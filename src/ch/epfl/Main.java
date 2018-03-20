@@ -62,10 +62,10 @@ public class Main {
 		 ColumnStore columnstoreData = new ColumnStore(schema, "input/data.csv", ",");
 		 columnstoreData.load();
 
-		 testDSMvector();
-//		 testNSMVolcano();
-//		 testPAXVolcano();
-//		 testDSMcolumnar();
+		 testNSMVolcano();
+		 testPAXVolcano();
+		 testDSMColumnar();
+		 testDSMVector();
 	}
 	
 	public static void testNSMVolcano() {
@@ -180,7 +180,7 @@ public class Main {
 		 System.out.println(parseTime(System.nanoTime() - time));
 	}
 
-	public static void testDSMcolumnar() {
+	public static void testDSMColumnar() {
 		 System.out.println("_DSM COLUMNAR BENCHMARK_");
 		 ColumnStore orders = new ColumnStore(orderSchema, "input/orders_big.csv", "\\|");
 		 ColumnStore lines = new ColumnStore(lineitemSchema, "input/lineitem_big.csv", "\\|");
@@ -232,7 +232,7 @@ public class Main {
 		 System.out.println(parseTime(System.nanoTime() - time));
 	}
 
-	public static void testDSMvector() {
+	public static void testDSMVector() {
 		 System.out.println("_DSM VECTOR BENCHMARK_");
 		 ColumnStore orders = new ColumnStore(orderSchema, "input/orders_big.csv", "\\|");
 		 ColumnStore lines = new ColumnStore(lineitemSchema, "input/lineitem_big.csv", "\\|");
