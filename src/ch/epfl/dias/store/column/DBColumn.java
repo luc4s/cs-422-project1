@@ -6,37 +6,46 @@ import java.util.Arrays;
 import ch.epfl.dias.store.DataType;
 
 public class DBColumn {
-	private final Object[] mColumn;
+	private ArrayList<Object> mColumn;
 	private final DataType mType;
 	
-	public DBColumn(Object[] data, DataType type) {
-		if (data == null)
+	public DBColumn(DataType type) {
+		if (type == null)
 			throw new NullPointerException();
 
+		mColumn = new ArrayList<>();
+		mType = type;
+	}
+
+	public DBColumn(Object[] data, DataType type) {
+		if (data == null || type == null)
+			throw new NullPointerException();
+
+		mColumn = new ArrayList<>();
 		switch (type) {
 			case INT: 
 				Integer[] intColumn = new Integer[data.length];
 				for (int i = 0; i < data.length; ++i)
 					intColumn[i] = (Integer)data[i];
-				mColumn = intColumn;
+				mColumn.addAll(Arrays.asList(intColumn));
 				break;
 			case DOUBLE:
 				Double[] doubleColumn = new Double[data.length];
 				for (int i = 0; i < data.length; ++i)
 					doubleColumn[i] = (Double)data[i];
-				mColumn = doubleColumn;
+				mColumn.addAll(Arrays.asList(doubleColumn));
 				break;
 			case BOOLEAN:
 				Boolean[] booleanColumn = new Boolean[data.length];
 				for (int i = 0; i < data.length; ++i)
 					booleanColumn[i] = (Boolean)data[i];
-				mColumn = booleanColumn;
+				mColumn.addAll(Arrays.asList(booleanColumn));
 				break;
 			case STRING:
 				String[] stringColumn = new String[data.length];
 				for (int i = 0; i < data.length; ++i)
 					stringColumn[i] = (String)data[i];
-				mColumn = stringColumn;
+				mColumn.addAll(Arrays.asList(stringColumn));
 				break;
 			default:
 				throw new RuntimeException("Unrecognized type");
@@ -45,7 +54,7 @@ public class DBColumn {
 	}
 	
 	public int length() {
-		return mColumn.length;
+		return mColumn.size();
 	}
 	
 	public DataType type() {
@@ -53,29 +62,33 @@ public class DBColumn {
 	}
 
 	public Integer[] getAsInteger() {
-		return (Integer[]) mColumn;
+		return mColumn.toArray(new Integer[] {});
 	}
 	
 	public Boolean[] getAsBoolean() {
-		return (Boolean[]) mColumn;
+		return mColumn.toArray(new Boolean[] {});
 	}
 	
 	public String[] getAsString() {
-		return (String[]) mColumn;
+		return mColumn.toArray(new String[] {});
 	}
 	
 	public Double[] getAsDouble() {
-		return (Double[]) mColumn;
+		return mColumn.toArray(new Double[] {});
 	}
 	
 	public Object[] get() {
-		return mColumn;
+		return mColumn.toArray();
 	}
 	
 	public Object get(int i) {
-		if (i < 0 || i > mColumn.length)
+		if (i < 0 || i > mColumn.size())
 			throw new IllegalArgumentException();
 		
-		return mColumn[i];
+		return mColumn.get(i);
+	}
+	
+	public void append(Object o) {
+		mColumn.add(o);
 	}
 }

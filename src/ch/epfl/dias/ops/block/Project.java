@@ -19,6 +19,9 @@ public class Project implements BlockOperator {
 
 	public DBColumn[] execute() {
 		DBColumn[] cols = mChild.execute();
+		if (cols.length == 0)
+			return cols;
+
 		DBColumn[] filteredCols = new DBColumn[mColumns.length];
 		for (int i = 0; i < filteredCols.length; ++i)
 			filteredCols[i] = cols[mColumns[i]];

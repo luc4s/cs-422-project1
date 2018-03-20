@@ -1,6 +1,6 @@
 package ch.epfl.dias.ops.vector;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import ch.epfl.dias.ops.BinaryOp;
 import ch.epfl.dias.store.DataType;
@@ -12,6 +12,8 @@ public class Select implements VectorOperator {
 	private final BinaryOp mOp;
 	private final int mFieldNo;
 	private final int mValue;
+	
+	private LinkedList<DBColumn[]> mBuffer;
 
 	public Select(VectorOperator child, BinaryOp op, int fieldNo, int value) {
 		if (child == null || op == null)
@@ -24,6 +26,7 @@ public class Select implements VectorOperator {
 		mFieldNo = fieldNo;
 		mValue = value;
 		mOp = op;
+		mBuffer = new LinkedList<>();
 	}
 	
 	@Override
@@ -33,46 +36,66 @@ public class Select implements VectorOperator {
 
 	@Override
 	public DBColumn[] next() {
+		if (!mBuffer.isEmpty())
+			return mBuffer.removeFirst();
+
 		DBColumn[] cols = mChild.next();
-		if (cols.length == 0)
-			return cols;
+		int counter = 0;
+		int vecSize = cols[0].length();
 
 		if (cols[mFieldNo].type() != DataType.INT)
 			throw new UnsupportedOperationException("SELECT: Can only perform on Integer fields");
 
-		Integer[] values = cols[mFieldNo].getAsInteger();
-		ArrayList< ArrayList<Object> > filtered = new ArrayList<>();
+		DBColumn[] filtered = new DBColumn[cols.length];
 		for (int i = 0; i < cols.length; ++i)
-			filtered.add(new ArrayList<>());
+			filtered[i] = new DBColumn(cols[i].type());
 
-		for (int i = 0; i < cols[mFieldNo].length(); ++i) {
-			final int value = values[i];
-			boolean result = false;
-			switch (mOp) {
-				case LT: result = value < mValue;  break;
-				case LE: result = value <= mValue; break;				
-				case EQ: result = value == mValue; break;
-				case NE: result = value != mValue; break;
-				case GT: result = value > mValue;  break;
-				case GE: result = value >= mValue; break;
-				default:
-					throw new RuntimeException("SELECT: Unsupported operator");
+		while (counter < vecSize && cols[0].length() > 0) {
+	
+			for (int i = 0; i < cols[mFieldNo].length(); ++i) {
+				final int value = (Integer)cols[mFieldNo].get(i);
+				boolean result = false;
+				switch (mOp) {
+					case LT: result = value < mValue;  break;
+					case LE: result = value <= mValue; break;				
+					case EQ: result = value == mValue; break;
+					case NE: result = value != mValue; break;
+					case GT: result = value > mValue;  break;
+					case GE: result = value >= mValue; break;
+					default:
+						throw new RuntimeException("SELECT: Unsupported operator");
+				}
+				if (result) {
+					counter++;
+					for (int j = 0; j < cols.length; ++j)
+						filtered[j].append(cols[j].get(i));
+				}
+				
+				if (counter >= vecSize) {
+					mBuffer.addLast(filtered);
+
+					filtered = new DBColumn[cols.length];
+					for (int j = 0; j < cols.length; ++j)
+						filtered[j] = new DBColumn(cols[j].type());
+				}
 			}
-			if (result) {
-				for (int j = 0; j < filtered.size(); ++j)
-					filtered.get(j).add(cols[j].get()[i]);
-			}
+
+			if (counter < vecSize)
+				cols = mChild.next();
 		}
 		
-		DBColumn[] filteredCols = new DBColumn[cols.length];
-		for (int i = 0; i < filtered.size(); ++i)
-			filteredCols[i] = new DBColumn(filtered.get(i).toArray(), cols[i].type());
-		
-		return filteredCols;
+
+		if (!mBuffer.isEmpty()) {
+			mBuffer.addLast(filtered);
+			return mBuffer.removeFirst();
+		}
+		else
+			return filtered;
 	}
 
 	@Override
 	public void close() {
 		mChild.close();
+		mBuffer.clear();
 	}
 }

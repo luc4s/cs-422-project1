@@ -30,13 +30,13 @@ public class Select implements BlockOperator {
 		DBColumn[] cols = mChild.execute();
 		if (cols[mFieldNo].type() != DataType.INT)
 			throw new UnsupportedOperationException("SELECT: Only Integer comparison is supported (provided: " + cols[mFieldNo].type().toString() + ")");
-		
-		ArrayList< ArrayList<Object> > filtered = new ArrayList<>();
+
+		DBColumn[] filtered = new DBColumn[cols.length];
 		for (int i = 0; i < cols.length; ++i)
-			filtered.add(new ArrayList<>());
+			filtered[i] = new DBColumn(cols[i].type());
 		
 		for (int i = 0; i < cols[0].length(); ++i) {
-			final int value = cols[mFieldNo].getAsInteger()[i].intValue();
+			final int value = (Integer)cols[mFieldNo].get(i);
 			boolean result = false;
 			switch (mOp) {
 				case LT: result = value < mValue;  break;
@@ -49,15 +49,11 @@ public class Select implements BlockOperator {
 					throw new RuntimeException("SELECT: Unsupported binary operator.");
 			}
 			if (result) {
-				for (int j = 0; j < filtered.size(); ++j)
-					filtered.get(j).add(cols[j].get()[i]);
+				for (int j = 0; j < filtered.length; ++j)
+					filtered[j].append(cols[j].get(i));
 			}
 		}
 		
-		DBColumn[] filteredCols = new DBColumn[cols.length];
-		for (int i = 0; i < filteredCols.length; ++i)
-			filteredCols[i] = new DBColumn(filtered.get(i).toArray(), cols[i].type());
-
-		return filteredCols;
+		return filtered;
 	}
 }

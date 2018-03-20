@@ -27,8 +27,13 @@ public class Scan implements VectorOperator {
 		DBColumn[] cols = mStore.getColumns(null);
 		final int startIndex = mCounter++ * mVectorSize;
 		
-		if (startIndex >= cols[0].length())
-			return new DBColumn[0];
+		if (startIndex >= cols[0].length()) {
+			DBColumn[] emptyVec = new DBColumn[cols.length];
+			for (int i = 0; i < emptyVec.length; ++i)
+				emptyVec[i] = new DBColumn(cols[i].type());
+			
+			return emptyVec;
+		}
 		
 		DBColumn[] vector = new DBColumn[cols.length];
 		for (int i = 0; i < cols.length; ++i) {

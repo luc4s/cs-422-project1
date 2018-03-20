@@ -18,6 +18,8 @@ public class Join implements VectorOperator {
 	
 	private HashMap<Object, LinkedList<Integer> > mHashTable;
 	private ArrayList<DBColumn[]> mLeftColumns;
+	
+	private LinkedList<DBColumn[]> mBuffer;
 
 
 	public Join(VectorOperator leftChild, VectorOperator rightChild, int leftFieldNo, int rightFieldNo) {
@@ -31,6 +33,7 @@ public class Join implements VectorOperator {
 		mRightChild = rightChild;
 		mLeftFieldNo = leftFieldNo;
 		mRightFieldNo = rightFieldNo;
+		mBuffer = new LinkedList<>();
 	}
 
 	@Override
@@ -42,7 +45,7 @@ public class Join implements VectorOperator {
 
 		DBColumn[] cols;
 		int counter = 0;
-		while ((cols = mLeftChild.next()).length > 0) {
+		while ((cols = mLeftChild.next())[0].length() > 0) {
 			mLeftColumns.add(cols);
 			final DBColumn column = cols[mLeftFieldNo];
 			
@@ -69,39 +72,61 @@ public class Join implements VectorOperator {
 
 	@Override
 	public DBColumn[] next() {
-		DBColumn[] rightCols = mRightChild.next();
-		if (rightCols.length == 0 || mLeftColumns.isEmpty())
-			return new DBColumn[0]; // Return empty vector in case one of the operand is empty
+		if (!mBuffer.isEmpty())
+			return mBuffer.removeFirst();
 
+		DBColumn[] rightCols = mRightChild.next();
 		DBColumn rightField = rightCols[mRightFieldNo];
 		
-		ArrayList< ArrayList<Object> > fieldsList = new ArrayList<>();
-		for (int i = 0; i < mLeftSchema.length + rightCols.length; ++i)
-			fieldsList.add(new ArrayList<Object>());
-		
-		for (int i = 0; i < rightField.length(); ++i) {
-			LinkedList<Integer> bucket = mHashTable.get(rightField.get(i));
-			if (bucket == null || bucket.isEmpty())
-				continue;
-			
-			for (Integer index : bucket) {
-				Object[] leftRow = getLeftRow(index);
-				for (int j = 0; j < leftRow.length; ++j)
-					fieldsList.get(j).add(leftRow[j]);
+		DBColumn[] vector = new DBColumn[rightCols.length + mLeftSchema.length];
+		for (int i = 0; i < mLeftSchema.length; ++i)
+			vector[i] = new DBColumn(mLeftSchema[i]);
+		for (int i = 0; i < rightCols.length; ++i)
+			vector[i + mLeftSchema.length] = new DBColumn(rightCols[i].type());
+
+		if (rightCols[0].length() == 0 || mLeftColumns.isEmpty())
+			return vector; // Return empty vector in case one of the operand is empty
+
+		int counter = 0;
+		int vecSize = rightCols[0].length();
+		while (counter < vecSize && rightCols[0].length() > 0) {
+			for (int i = 0; i < rightField.length(); ++i) {
+				LinkedList<Integer> bucket = mHashTable.get(rightField.get(i));
+				if (bucket == null || bucket.isEmpty())
+					continue;
 				
-				for (int j = 0; j < rightCols.length; ++j)
-					fieldsList.get(leftRow.length + j).add(rightCols[j].get(i));
+				for (Integer index : bucket) {
+					counter++;
+					Object[] leftRow = getLeftRow(index);
+					for (int j = 0; j < leftRow.length; ++j)
+						vector[j].append(leftRow[j]);
+					
+					for (int j = 0; j < rightCols.length; ++j)
+						vector[leftRow.length + j].append(rightCols[j].get(i));
+					
+					if (counter >= vecSize) {
+						mBuffer.addLast(vector);
+						vector = new DBColumn[rightCols.length + mLeftSchema.length];
+						for (int j = 0; j < mLeftSchema.length; ++j)
+							vector[j] = new DBColumn(mLeftSchema[j]);
+						for (int j = 0; j < rightCols.length; ++j)
+							vector[j + mLeftSchema.length] = new DBColumn(rightCols[j].type());
+					}
+				}
+			}
+			
+			if (counter < vecSize) {
+				rightCols = mRightChild.next();
+				rightField = rightCols[mRightFieldNo];
 			}
 		}
-
-		DBColumn[] cols = new DBColumn[fieldsList.size()];
-		for (int i = 0; i < mLeftSchema.length; ++i)
-			cols[i] = new DBColumn(fieldsList.get(i).toArray(), mLeftSchema[i]);
-
-		for (int i = 0; i < rightCols.length; ++i)
-			cols[mLeftSchema.length + i] = new DBColumn(fieldsList.get(mLeftSchema.length + i).toArray(), rightCols[i].type());
 		
-		return cols;
+		if (mBuffer.isEmpty())
+			return vector;
+		else {
+			mBuffer.addLast(vector);
+			return mBuffer.removeFirst();
+		}
 	}
 
 	@Override

@@ -62,9 +62,9 @@ public class Main {
 		 ColumnStore columnstoreData = new ColumnStore(schema, "input/data.csv", ",");
 		 columnstoreData.load();
 
-		 testDSMvector();
-		 testNSMVolcano();
-		 testPAXVolcano();
+//		 testDSMvector();
+//		 testNSMVolcano();
+//		 testPAXVolcano();
 		 testDSMcolumnar();
 
 		
@@ -133,8 +133,8 @@ public class Main {
 	
 	public static void testPAXVolcano() {
 		 System.out.println("_PAX BENCHMARK_");
-		 PAXStore orders = new PAXStore(orderSchema, "input/orders_big.csv", "\\|", 10);
-		 PAXStore lines = new PAXStore(lineitemSchema, "input/lineitem_big.csv", "\\|", 10);
+		 PAXStore orders = new PAXStore(orderSchema, "input/orders_big.csv", "\\|", 100);
+		 PAXStore lines = new PAXStore(lineitemSchema, "input/lineitem_big.csv", "\\|", 100);
 		 System.out.println("[PAX] Loading datasets...");
 		 lines.load();
 		 orders.load();

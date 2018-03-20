@@ -47,32 +47,27 @@ public class Join implements BlockOperator {
 			bucket.addLast(i);
 		}
 
-		ArrayList< ArrayList<Object> > joinedColumns = new ArrayList<>();
-		for (int i = 0; i < left.length + right.length; ++i)
-			joinedColumns.add(new ArrayList<Object>());
+		DBColumn[] joinedColumns = new DBColumn[left.length + right.length];
+		for (int i = 0; i < left.length; ++i)
+			joinedColumns[i] = new DBColumn(left[i].type());
+		for (int i = 0; i < right.length; ++i)
+			joinedColumns[left.length + i] = new DBColumn(right[i].type());
 
-		Object[] rightCol = right[mRightFieldNo].get();
-		for (int i = 0; i < rightCol.length; ++i) {
-			LinkedList<Integer> bucket = hashTable.get(rightCol[i]);
-			if (bucket == null || bucket.size() < 1)
+		DBColumn rightCol = right[mRightFieldNo];
+		for (int i = 0; i < rightCol.length(); ++i) {
+			LinkedList<Integer> bucket = hashTable.get(rightCol.get(i));
+			if (bucket == null || bucket.isEmpty())
 				continue;
 			
 			for (Integer index : bucket) {
 				for (int j = 0; j < left.length; ++j)
-					joinedColumns.get(j).add(left[j].get(index));
+					joinedColumns[j].append(left[j].get(index));
 
-				for (int j = left.length; j < joinedColumns.size(); ++j)
-					joinedColumns.get(j).add(right[j - left.length].get(i));
+				for (int j = left.length; j < joinedColumns.length; ++j)
+					joinedColumns[j].append(right[j - left.length].get(i));
 			}
 		}
 		
-		DBColumn[] cols = new DBColumn[left.length + right.length];
-		for (int i = 0; i < left.length; ++i)
-			cols[i] = new DBColumn(joinedColumns.get(i).toArray(), left[i].type());
-
-		for (int i = 0; i < right.length; ++i)
-			cols[left.length + i] = new DBColumn(joinedColumns.get(left.length + i).toArray(), right[i].type());
-		
-		return cols;
+		return joinedColumns;
 	}
 }
